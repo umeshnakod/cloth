@@ -14,7 +14,7 @@ app.use(bodyParser.json())
 app.use(function (req, res, next) {
     // Website you wish to allow to 
     
-    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200');
+    res.setHeader('Access-Control-Allow-Origin', 'http://cloth-material.s3-website.ap-south-1.amazonaws.com:9000');
 
     // Request methods you wish to allow
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
@@ -38,7 +38,7 @@ app.get('/', function (req, res) {
         dbo.collection("listOfItemAndPannaSize").findOne({}, function (err, result) {
             console.log("response of", result);
             if (err) throw err;
-            res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200');
+            res.setHeader('Access-Control-Allow-Origin', 'http://cloth-material.s3-website.ap-south-1.amazonaws.com:9000');
             res.send(result);
         });
     });
