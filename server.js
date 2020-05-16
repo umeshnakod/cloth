@@ -43,6 +43,10 @@ app.get('/', function (req, res) {
 
 });
 
+app.get('/test', function (req, res) {
+res.send("This was test api")
+});
+
 app.get('/get_vendor_list',function(req,res){
 MongoClient.connect(url, function(err, db){
     var dbo = db.db("material_collections");
