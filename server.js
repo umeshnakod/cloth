@@ -12,7 +12,8 @@ app.use(bodyParser.urlencoded())
 app.use(bodyParser.json())
 // Add headers
 app.use(function (req, res, next) {
-    // Website you wish to allow to connect
+    // Website you wish to allow to 
+    
     res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200');
 
     // Request methods you wish to allow
@@ -31,7 +32,7 @@ app.use(function (req, res, next) {
 
 app.get('/', function (req, res) {
 
-    MongoClient.connect(url, function (err, db) {
+    MongoClient.connect(url,{useNewUrlParser: true, useUnifiedTopology: true}, function (err, db) {
         if (err) throw err;
         var dbo = db.db("material_collections");
         dbo.collection("listOfItemAndPannaSize").findOne({}, function (err, result) {
@@ -48,7 +49,7 @@ res.send("This was test api")
 });
 
 app.get('/get_vendor_list',function(req,res){
-MongoClient.connect(url, function(err, db){
+MongoClient.connect(url,{useNewUrlParser: true, useUnifiedTopology: true}, function(err, db){
     var dbo = db.db("material_collections");
     var vendorList = [];    
     dbo.collection("contractor_list").find({}).toArray(function(err, result){
@@ -169,7 +170,7 @@ app.post('/save_new_item', function (req, res) {
 
 
 app.get('/get_vendors_name_list',function(req,res){
-    MongoClient.connect(url, function(err, db){
+    MongoClient.connect(url,{useNewUrlParser: true, useUnifiedTopology: true}, function(err, db){
         var dbo = db.db("material_collections");
         var vendorList = [];    
         dbo.collection("contractor_list").find().toArray(function(err, result){
@@ -185,7 +186,7 @@ app.get('/get_vendors_name_list',function(req,res){
 
 app.post('/get_orders',function(req,res){
     console.log(req.body)
-    MongoClient.connect(url, function(err, db){
+    MongoClient.connect(url,{useNewUrlParser: true, useUnifiedTopology: true}, function(err, db){
         var dbo = db.db("material_collections");  
         dbo.collection("order_data").find( { $and: [ { "vendorDetails.name" : req.body.name }] }).toArray(function(err, result){
             if(err){
@@ -202,7 +203,7 @@ app.post('/make_cloth_settlement',function(req,res){
     console.log(req.body)
     console.log("/////////////////////////")
     const id = mongodb.ObjectID(req.body._id);
-    MongoClient.connect(url, function(err, db){
+    MongoClient.connect(url, {useNewUrlParser: true, useUnifiedTopology: true},function(err, db){
         var dbo = db.db("material_collections");  
         dbo.collection("order_data").find( { $and: [ { "vendorDetails.name" : req.body.vendorName }, { "_id" : id }] }).toArray(function(err, result){
             // console.log("result",result)
