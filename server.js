@@ -31,11 +31,12 @@ app.use(function (req, res, next) {
 });
 
 app.get('/', function (req, res) {
-
+    console.log("called first list of item api");
     MongoClient.connect(url,{useNewUrlParser: true, useUnifiedTopology: true}, function (err, db) {
         if (err) throw err;
         var dbo = db.db("material_collections");
         dbo.collection("listOfItemAndPannaSize").findOne({}, function (err, result) {
+            console.log("response of", result);
             if (err) throw err;
             res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200');
             res.send(result);
