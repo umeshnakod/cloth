@@ -3,7 +3,7 @@ var express = require('express');
 var app = express();
 var MongoClient = require('mongodb').MongoClient;
 var mongodb     = require('mongodb');
-var url = "mongodb://localhost:27017/";
+var url = "mongodb://13.126.178.150:27017/";
 var bodyParser = require('body-parser');
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded())
