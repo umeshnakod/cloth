@@ -4,6 +4,7 @@ var app = express();
 var MongoClient = require('mongodb').MongoClient;
 var mongodb     = require('mongodb');
 var url = "mongodb://13.126.178.150:27017/";
+// var url = "mongodb://localhost:27017/";
 var bodyParser = require('body-parser');
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded())
@@ -12,9 +13,8 @@ app.use(bodyParser.urlencoded())
 app.use(bodyParser.json())
 // Add headers
 app.use(function (req, res, next) {
-    // Website you wish to allow to 
-    
-    res.setHeader('Access-Control-Allow-Origin', 'http://cloth-material.s3-website.ap-south-1.amazonaws.com:9000');
+    // Website you wish to allow to connect
+    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200');
 
     // Request methods you wish to allow
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
@@ -31,29 +31,24 @@ app.use(function (req, res, next) {
 });
 
 app.get('/', function (req, res) {
-    console.log("called first list of item api");
-    MongoClient.connect(url,{useNewUrlParser: true, useUnifiedTopology: true}, function (err, db) {
+    console.log("calleddd----")
+    MongoClient.connect(url,{ useUnifiedTopology: true }, function (err, db) {
         if (err) throw err;
         var dbo = db.db("material_collections");
         dbo.collection("listOfItemAndPannaSize").findOne({}, function (err, result) {
-            console.log("response of", result);
             if (err) throw err;
-            res.setHeader('Access-Control-Allow-Origin', 'http://cloth-material.s3-website.ap-south-1.amazonaws.com:9000');
+            res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200');
             res.send(result);
         });
     });
 
 });
 
-app.get('/test', function (req, res) {
-res.send("This was test api")
-});
-
 app.get('/get_vendor_list',function(req,res){
-MongoClient.connect(url,{useNewUrlParser: true, useUnifiedTopology: true}, function(err, db){
+MongoClient.connect(url,{ useUnifiedTopology: true }, function(err, db){
     var dbo = db.db("material_collections");
     var vendorList = [];    
-    dbo.collection("contractor_list").find({}).toArray(function(err, result){
+    dbo.collection("Contractor_List").find({}).toArray(function(err, result){
         if(err){
             res.send(err);
         }
@@ -171,10 +166,10 @@ app.post('/save_new_item', function (req, res) {
 
 
 app.get('/get_vendors_name_list',function(req,res){
-    MongoClient.connect(url,{useNewUrlParser: true, useUnifiedTopology: true}, function(err, db){
+    MongoClient.connect(url, { useUnifiedTopology: true },function(err, db){
         var dbo = db.db("material_collections");
         var vendorList = [];    
-        dbo.collection("contractor_list").find().toArray(function(err, result){
+        dbo.collection("Contractor_List").find().toArray(function(err, result){
             if(err){
                 res.send(err);
             }
@@ -187,7 +182,7 @@ app.get('/get_vendors_name_list',function(req,res){
 
 app.post('/get_orders',function(req,res){
     console.log(req.body)
-    MongoClient.connect(url,{useNewUrlParser: true, useUnifiedTopology: true}, function(err, db){
+    MongoClient.connect(url,{ useUnifiedTopology: true }, function(err, db){
         var dbo = db.db("material_collections");  
         dbo.collection("order_data").find( { $and: [ { "vendorDetails.name" : req.body.name }] }).toArray(function(err, result){
             if(err){
@@ -204,7 +199,7 @@ app.post('/make_cloth_settlement',function(req,res){
     console.log(req.body)
     console.log("/////////////////////////")
     const id = mongodb.ObjectID(req.body._id);
-    MongoClient.connect(url, {useNewUrlParser: true, useUnifiedTopology: true},function(err, db){
+    MongoClient.connect(url, { useUnifiedTopology: true },function(err, db){
         var dbo = db.db("material_collections");  
         dbo.collection("order_data").find( { $and: [ { "vendorDetails.name" : req.body.vendorName }, { "_id" : id }] }).toArray(function(err, result){
             // console.log("result",result)
@@ -240,8 +235,8 @@ app.post('/make_cloth_settlement',function(req,res){
 
 
 
-var server = app.listen(9000, function () {
+var server = app.listen(3000, function () {
     var host = server.address().address
     var port = server.address().port
-    console.log("Example app listening at http://%s:%s", host, port);
+    console.log("Example app listening at http://%s:%s", host, port)
 });
