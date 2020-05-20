@@ -14,7 +14,7 @@ app.use(bodyParser.json())
 // Add headers
 app.use(function (req, res, next) {
     // Website you wish to allow to connect
-    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200');
+    res.setHeader('Access-Control-Allow-Origin', 'http://cloth-material.s3-website.ap-south-1.amazonaws.com:9000');
 
     // Request methods you wish to allow
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
@@ -37,7 +37,7 @@ app.get('/', function (req, res) {
         var dbo = db.db("material_collections");
         dbo.collection("listOfItemAndPannaSize").findOne({}, function (err, result) {
             if (err) throw err;
-            res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200');
+            res.setHeader('Access-Control-Allow-Origin', 'http://cloth-material.s3-website.ap-south-1.amazonaws.com:9000');
             res.send(result);
         });
     });
@@ -235,7 +235,7 @@ app.post('/make_cloth_settlement',function(req,res){
 
 
 
-var server = app.listen(3000, function () {
+var server = app.listen(9000, function () {
     var host = server.address().address
     var port = server.address().port
     console.log("Example app listening at http://%s:%s", host, port)
