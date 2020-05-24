@@ -196,38 +196,59 @@ app.post('/get_orders',function(req,res){
 })
 
 app.post('/make_cloth_settlement',function(req,res){
-    console.log(req.body)
-    console.log("/////////////////////////")
-    const id = mongodb.ObjectID(req.body._id);
+
+    const id = mongodb.ObjectID(req.body.reqHeader.id);
     MongoClient.connect(url, { useUnifiedTopology: true },function(err, db){
         var dbo = db.db("material_collections");  
-        dbo.collection("order_data").find( { $and: [ { "vendorDetails.name" : req.body.vendorName }, { "_id" : id }] }).toArray(function(err, result){
-            // console.log("result",result)
-            for(let order of result[0]['orders']){
-                if(order['recipetNumber'] === req.body.recipetNumber){
-                    order['totalClothHaveToTakeOrToGive'] = req.body.totalClothHaveToTakeOrToGive;
-                    order['totalClothGiven'] = req.body.totalClothGiven;
+        var response = null; 
+        dbo.collection("order_data").find( { $and: [ { "vendorDetails.name" : req.body.reqHeader.name }, { "_id" : id }] }).toArray(function(err, result){
+            console.log("result",result[0]['orders'][1]);
+            console.log("-------------------------------------")
+            console.log("==========req",req.body['changedData']);
+
+            if(req.body.isClothSettlement){
+                for (let index = 0; index < result[0]['orders'].length; index++) {
+                    if(result[0]['orders'][index]['selectedItem'] == req.body['changedData']['selectedItem']){
+
+                        result[0]['orders'][index] = req.body['changedData'];
+                        response = result;
+                        dbo.collection("order_data").deleteOne({ $and: [ { "vendorDetails.name" : req.body.reqHeader.name }, { "_id" : id }] }, function(err, obj) {
+                            if (err) throw err;
+                            dbo.collection("order_data").insertMany(response, function (err, result) {
+                                if (err) throw err;
+                                res.end(JSON.stringify({success : true}));
+                            });
+                        })
+                    }
+                    
                 }
+
             }
-            const response = result
-            console.log(result)
-            console.log("====================")
-            console.log(result[0]['orders'])
-            console.log("====================")
+            else{
+                for (let index = 0; index < result[0]['orders'].length; index++) {
+                    
+                    if(result[0]['orders'][index]['recipetNumber'] == req.body['changedData']['recipetNumber']){
+                        result[0]['orders'][index]['order'] = req.body['changedData']['order'];
+                        response = result;
+                        dbo.collection("order_data").deleteOne({ $and: [ { "vendorDetails.name" : req.body.reqHeader.name }, { "_id" : id }] }, function(err, obj) {
+                            if (err) throw err;
+                            dbo.collection("order_data").insertMany(response, function (err, result) {
+                                if (err) throw err;
+                                res.end(JSON.stringify({success : true}));
+                            });
+                        })
+                    }
+                    
+                }
+                // for(let order of result[0]['orders']){
+                //     if(order['recipetNumber'] === req.body['changedData']['recipetNumber']){
+                //         // console.log("----------",order['order'][0])
+                //         order['order'] = req.body['changedData']['order']
+                //     }
+                // }
+ 
+            }
 
-
-            dbo.collection("order_data").deleteOne({ $and: [ { "vendorDetails.name" : req.body.vendorName }, { "_id" : id }] }, function(err, obj) {
-                if (err) throw err;
-                dbo.collection("order_data").insert(response, function (err, result) {
-                    if (err) throw err;
-                    res.end(JSON.stringify({success : true}));
-                });
-            })
-
-            // if(err){
-            //     res.send(err);
-            // }
-            // res.send(result);
         })
     })
 })
@@ -235,7 +256,7 @@ app.post('/make_cloth_settlement',function(req,res){
 
 
 
-var server = app.listen(9000, function () {
+var server = app.listen(3000, function () {
     var host = server.address().address
     var port = server.address().port
     console.log("Example app listening at http://%s:%s", host, port)
